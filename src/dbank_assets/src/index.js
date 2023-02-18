@@ -1,10 +1,7 @@
 import { dbank } from "../../declarations/dbank"
 
 window.addEventListener("load", async () => {
-  // console.log("Finished loading");
-  const currentAmout = await dbank.checkBalance();
-  document.getElementById("value").innerText = currentAmout.toFixed(2);
-
+  update();
 });
 
 document.querySelector("form").addEventListener("submit", async (event) => {
@@ -17,12 +14,26 @@ document.querySelector("form").addEventListener("submit", async (event) => {
   
   button.setAttribute("disabled", true)
 
-  await dbank.topUp(inputAmount);
-  // await dbank.withdraw(outputAmount);
+  if (document.getElementById("input-amount").value.length != 0) {
+    await dbank.topUp(inputAmount);
+  };
 
-  const currentAmout = await dbank.checkBalance();
-  document.getElementById("value").innerText = currentAmout.toFixed(2);
+  if (document.getElementById("withdrawal-amount").value.length != 0) {
+    await dbank.withdraw(outputAmount);
+  };
 
+  update()
+
+  document.getElementById("input-amount").value = "";
+  document.getElementById("withdrawal-amount").value = "";
   button.removeAttribute("disabled");
 
-})
+  var audio = new Audio('success.mp3');
+  audio.play();
+ 
+});
+
+const update = async () => {
+  const currentAmout = await dbank.checkBalance();
+  document.getElementById("value").innerText = currentAmout.toFixed(2);
+}
